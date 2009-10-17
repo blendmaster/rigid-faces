@@ -64,31 +64,12 @@ int main(int argc, char *argv[])
 
     cvNamedWindow("image");
     cvSetMouseCallback( "image", on_mouse, 0 );
-    IplImage* pColorPhoto = 0;
-
-    IplImage* pGrayPhoto = 0;
-    IplImage* pImgT = 0;
-    IplImage* pImgI = 0;
-
-    // pColorPhoto = cvLoadImage("/home/rohananil/abc.jpg");
-
-    // Create other images.
-
-
-    //cvShowImage( "image",pColorPhoto  );
-
-
-
+    IplImage* camImage = 0, grayIterateImage = 0,templateImage , iterateImage = 0;
 
 
     LKInverseComp lk;
-
-
     CvPoint p1,p2,p3,p4;
-
-    cvShowImage( "image",pColorPhoto  );
-
-
+    cvShowImage( "image",camImage  );
 
     int flag=0;
     if (webcam.startCamera()==1)
@@ -100,21 +81,21 @@ int main(int argc, char *argv[])
 
             while (t1<6000 &&flag==0)
             {
-                pColorPhoto = webcam.queryFrame();
-                cvShowImage( "image",pColorPhoto);
+                camImage = webcam.queryFrame();
+                cvShowImage( "image",camImage);
                 cvWaitKey(11);
-                cvReleaseImage(&pColorPhoto);
+                cvReleaseImage(&camImage);
                 t1 = ((double)cvGetTickCount() - t)/((double)cvGetTickFrequency()*1000.);
             }
 
-            pColorPhoto = webcam.queryFrame();
-            CvSize photo_size = cvSize(pColorPhoto->width,pColorPhoto->height);
-            pGrayPhoto = cvCreateImage(photo_size, IPL_DEPTH_8U, 1);
+            camImage = webcam.queryFrame();
+            CvSize photo_size = cvSize(camImage->width,camImage->height);
+            grayIterateImage = cvCreateImage(photo_size, IPL_DEPTH_8U, 1);
 
-            cvCvtColor(pColorPhoto, pGrayPhoto, CV_RGB2GRAY);
-            pImgI = cvCreateImage(photo_size, IPL_DEPTH_8U, 1);
-            cvCopy(pGrayPhoto, pImgI);
-            cvShowImage( "image",pColorPhoto);
+            cvCvtColor(camImage, grayIterateImage, CV_RGB2GRAY);
+            iterateImage = cvCreateImage(photo_size, IPL_DEPTH_8U, 1);
+            cvCopy(grayIterateImage, iterateImage);
+            cvShowImage( "image",camImage);
             while (templateLatch<4)
             {
                 cvWaitKey(1);
@@ -135,23 +116,23 @@ int main(int argc, char *argv[])
             piTop.y=ptTop.y;
             if (flag==0)
             {
-                pImgT = cvCreateImage(cvSize(ptBottom.x-ptTop.x,ptBottom.y-ptTop.y), IPL_DEPTH_8U, 1);
-                cvSetImageROI(pGrayPhoto ,cvRect(ptTop.x,ptTop.y,ptBottom.x-ptTop.x,ptBottom.y-ptTop.y));
-                cvResize(  pGrayPhoto, 	pImgT, CV_INTER_LINEAR );
-                cvResetImageROI( pGrayPhoto);
-                lk.setTemplate(pImgT);
+                templateImage = cvCreateImage(cvSize(ptBottom.x-ptTop.x,ptBottom.y-ptTop.y), IPL_DEPTH_8U, 1);
+                cvSetImageROI(grayIterateImage ,cvRect(ptTop.x,ptTop.y,ptBottom.x-ptTop.x,ptBottom.y-ptTop.y));
+                cvResize(  grayIterateImage, 	templateImage, CV_INTER_LINEAR );
+                cvResetImageROI( grayIterateImage);
+                lk.setTemplate(templateImage);
                 double ratX = double(piBottom.x-piTop.x)/double(ptBottom.x-ptTop.x);
                 double ratY = double(piBottom.y-piTop.y)/double(ptBottom.y-ptTop.y);
 
                 lk.setCurrentWarpEstimate(0,0,0,0,piTop.x,piTop.y);
-                cvShowImage( "template",pImgT);
+                cvShowImage( "template",templateImage);
 
 
-// cvRectangle(pColorPhoto, ptTop, ptBottom, CV_RGB(255,0,0), 3, 8, 0 );
-//            cvRectangle(pColorPhoto, piTop, piBottom, CV_RGB(0,255,0), 3, 8, 0 );
+// cvRectangle(camImage, ptTop, ptBottom, CV_RGB(255,0,0), 3, 8, 0 );
+//            cvRectangle(camImage, piTop, piBottom, CV_RGB(0,255,0), 3, 8, 0 );
                 flag=1;
             }
-            lk.setImage(pImgI);
+            lk.setImage(iterateImage);
             lk.iterate();
 
 
@@ -164,18 +145,18 @@ int main(int argc, char *argv[])
             p3.y=  int(CV_MAT_ELEM(*lk.WarpMatrix, float,1, 1)*(ptBottom.y-ptTop.y)+ CV_MAT_ELEM(*lk.WarpMatrix, float,1, 0)*(ptBottom.x-ptTop.x) +CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
             p4.x= int(  CV_MAT_ELEM(*lk.WarpMatrix, float,0, 0)*(ptBottom.x-ptTop.x) + CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2));
             p4.y=  int( CV_MAT_ELEM(*lk.WarpMatrix, float,1, 0)*(ptBottom.x-ptTop.x) +CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
-            cvLine(pColorPhoto,p1,p2, cvScalar(0,255,255), 1);
-            cvLine(pColorPhoto,p2,p3, cvScalar(0,255,255), 1);
-            cvLine(pColorPhoto,p3,p4, cvScalar(0,255,255), 1);
-            cvLine(pColorPhoto,p4,p1, cvScalar(0,255,255), 1);
-            cvLine(pColorPhoto,p4,p1, cvScalar(0,255,255), 1);
-            cvShowImage( "image",pColorPhoto);
+            cvLine(camImage,p1,p2, cvScalar(0,255,255), 1);
+            cvLine(camImage,p2,p3, cvScalar(0,255,255), 1);
+            cvLine(camImage,p3,p4, cvScalar(0,255,255), 1);
+            cvLine(camImage,p4,p1, cvScalar(0,255,255), 1);
+            cvLine(camImage,p4,p1, cvScalar(0,255,255), 1);
+            cvShowImage( "image",camImage);
             cvWaitKey(3);
 
-            cvReleaseImage(&pColorPhoto);
-            cvReleaseImage(&pGrayPhoto);
-            cvReleaseImage(&pImgI);
-            // cvReleaseImage(&pImgT);
+            cvReleaseImage(&camImage);
+            cvReleaseImage(&grayIterateImage);
+            cvReleaseImage(&iterateImage);
+            // cvReleaseImage(&templateImage);
 
 
         }
