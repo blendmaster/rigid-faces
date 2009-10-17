@@ -14,7 +14,10 @@
 CvPoint ptTop,ptBottom;
 CvPoint piTop,piBottom;
 CvPoint presetTop,presetBottom;
-
+IplImage* camImage;
+IplImage* grayIterateImage = 0;
+IplImage* templateImage = 0;
+IplImage* iterateImage = 0;
 
 int flag=0;
 int templateLatch=0;
@@ -64,12 +67,17 @@ int main(int argc, char *argv[])
 
     cvNamedWindow("image");
     cvSetMouseCallback( "image", on_mouse, 0 );
-    IplImage* camImage = 0, grayIterateImage = 0,templateImage , iterateImage = 0;
+
 
 
     LKInverseComp lk;
+
+
     CvPoint p1,p2,p3,p4;
+
     cvShowImage( "image",camImage  );
+
+
 
     int flag=0;
     if (webcam.startCamera()==1)
@@ -127,9 +135,6 @@ int main(int argc, char *argv[])
                 lk.setCurrentWarpEstimate(0,0,0,0,piTop.x,piTop.y);
                 cvShowImage( "template",templateImage);
 
-
-// cvRectangle(camImage, ptTop, ptBottom, CV_RGB(255,0,0), 3, 8, 0 );
-//            cvRectangle(camImage, piTop, piBottom, CV_RGB(0,255,0), 3, 8, 0 );
                 flag=1;
             }
             lk.setImage(iterateImage);
