@@ -181,8 +181,8 @@ cvZero(GradientY);
 */
    cvSobel(templateImage, GradientX, 1, 0);
    cvSobel(templateImage, GradientY, 0, 1);
-  cvConvertScale(GradientX, GradientX, 0.2);
-   cvConvertScale(GradientY, GradientY, 0.2);
+cvConvertScale(GradientX, GradientX, 0.2);
+ cvConvertScale(GradientY, GradientY, 0.2);
 
 
 

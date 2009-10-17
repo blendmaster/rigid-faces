@@ -42,9 +42,16 @@ private:
 
     CvMat* steepestDescentImage;
     CvMat* steepestDescentImageTranspose ;
-    CvMat* errorImage ;
+    CvMat* errorImage[16] ;
   //  CvMat* steepestDescentImageTranspose_X_errorImage;
-    CvMat* HessianMatrixInverse_steepestDescentImageTranspose ;
+    CvMat* steepestDescentImageBlockMatrix[16];
+    CvMat* steepestDescentImageTransposeMatrix[16];
+
+    CvMat* HessianBlockMatrix[16];
+    int MVALUE[16];
+    float errorValues[16];
+    CvMat* steepestDescentImageTranspose_X_errorImage_MVALUE ;
+CvMat* steepestDescentImageTranspose_X_errorImage_MVALUE_perBlock[16] ;
 
     CvMat* HessianMatrix ;
     CvMat* HessianMatrixInverse ;

@@ -7,7 +7,7 @@
 #include "cv.h"
 #include "highgui.h"
 #include "opencvWebcam.h"
-#include "LKInverseCompClass.h"
+#include "LKInverseCompRobustClass.h"
 
 #include <iostream>
 #include <stdio.h>
@@ -118,6 +118,14 @@ int main(int argc, char *argv[])
 
                 }
             }
+            if((ptBottom.x-ptTop.x)%4!=0)
+            ptBottom.x+=(4-(ptBottom.x-ptTop.x)%4);
+
+            if((ptBottom.y-ptTop.y)%4!=0)
+            ptBottom.y+=(4-(ptBottom.y-ptTop.y)%4);
+
+
+
             piBottom.x=ptBottom.x;
             piBottom.y=ptBottom.y;
             piTop.x=ptTop.x;
@@ -150,11 +158,10 @@ int main(int argc, char *argv[])
             p3.y=  int(CV_MAT_ELEM(*lk.WarpMatrix, float,1, 1)*(ptBottom.y-ptTop.y)+ CV_MAT_ELEM(*lk.WarpMatrix, float,1, 0)*(ptBottom.x-ptTop.x) +CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
             p4.x= int(  CV_MAT_ELEM(*lk.WarpMatrix, float,0, 0)*(ptBottom.x-ptTop.x) + CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2));
             p4.y=  int( CV_MAT_ELEM(*lk.WarpMatrix, float,1, 0)*(ptBottom.x-ptTop.x) +CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
-            cvLine(camImage,p1,p2, cvScalar(0,255,255), 1);
-            cvLine(camImage,p2,p3, cvScalar(0,255,255), 1);
-            cvLine(camImage,p3,p4, cvScalar(0,255,255), 1);
-            cvLine(camImage,p4,p1, cvScalar(0,255,255), 1);
-            cvLine(camImage,p4,p1, cvScalar(0,255,255), 1);
+            cvLine(camImage,p1,p2, cvScalar(0,255,255), 2);
+            cvLine(camImage,p2,p3, cvScalar(255,255,0), 2);
+            cvLine(camImage,p3,p4, cvScalar(255,0,255), 2);
+            cvLine(camImage,p4,p1, cvScalar(0,0,255), 2);
             cvShowImage( "image",camImage);
             cvWaitKey(3);
 
