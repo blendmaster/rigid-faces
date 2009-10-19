@@ -1,6 +1,6 @@
 /*
     COP - Active Appearance Model Face Tracking - using Inverse Compositional Approach
-    Rohan Anil , under Dr. Radhika Vatsan , BITS Pilani Goa Campus
+    Rohan Anil , under Dr.Radhika Vathsan , BITS Pilani Goa Campus
     rohan.ani;@gmail.com
     License : GPLV3
 */
@@ -18,6 +18,7 @@ IplImage* camImage;
 IplImage* grayIterateImage = 0;
 IplImage* templateImage = 0;
 IplImage* iterateImage = 0;
+IplImage* backGroundSubtraction = 0;
 
 int flag=0;
 int templateLatch=0;
@@ -86,10 +87,11 @@ int main(int argc, char *argv[])
         {
             double t = (double)cvGetTickCount();
             double t1;
-
-            while (t1<6000 &&flag==0)
+  //backGroundSubtraction = webcam.queryFrame();
+                cvShowImage( "template",camImage);
+            while (t1<7000 &&flag==0)
             {
-                camImage = webcam.queryFrame();
+              camImage = webcam.queryFrame();
                 cvShowImage( "image",camImage);
                 cvWaitKey(11);
                 cvReleaseImage(&camImage);
@@ -97,6 +99,7 @@ int main(int argc, char *argv[])
             }
 
             camImage = webcam.queryFrame();
+          //  cvSub(camImage,backGroundSubtraction,camImage);
             CvSize photo_size = cvSize(camImage->width,camImage->height);
             grayIterateImage = cvCreateImage(photo_size, IPL_DEPTH_8U, 1);
 

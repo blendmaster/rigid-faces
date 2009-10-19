@@ -1,6 +1,6 @@
 /*
     COP - Active Appearance Model Face Tracking - using Inverse Compositional Approach
-    Rohan Anil , under Dr. Radhika Vatsan , BITS Pilani Goa Campus
+    Rohan Anil , under Dr. Radhika Vathsan , BITS Pilani Goa Campus
     rohan.ani;@gmail.com
     License : GPLV3
 */
@@ -102,7 +102,7 @@ void LKInverseComp::iterate()
         //  printf("%e MEAN ERROR \n",averageError);
         setWarpMatrix(WarpMatrixDeltaP,p1,p2,p3,p4,p5,p6);
         cvInvert(WarpMatrixDeltaP,WarpMatrixDeltaPInverse);
-        cvMatMul(WarpMatrixDeltaPInverse,WarpMatrix,WarpMatrix);
+        cvMatMul(WarpMatrix,WarpMatrixDeltaPInverse,WarpMatrix);
 
 
         if (fabs(p1)<=DeltaE && fabs(p2)<=DeltaE && fabs(p3)<=DeltaE && fabs(p4)<=DeltaE && fabs(p5)<=DeltaE && fabs(p6)<=DeltaE)

@@ -3,8 +3,8 @@
 
 #ifndef _INCL_GUARD_WEBCAM
 #define _INCL_GUARD_WEBCAM
-#define IMAGE_WIDTH 320
-#define IMAGE_HEIGHT 240
+#define IMAGE_WIDTH 160
+#define IMAGE_HEIGHT 120
 
  class opencvWebcam
     {

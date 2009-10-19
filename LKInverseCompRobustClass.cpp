@@ -1,6 +1,6 @@
 /*
     COP - Active Appearance Model Face Tracking - using Inverse Compositional Approach
-    Rohan Anil , under Dr. Radhika Vatsan , BITS Pilani Goa Campus
+    Rohan Anil , under Dr. Radhika Vathsan , BITS Pilani Goa Campus
     rohan.ani;@gmail.com
     License : GPLV3
 */
@@ -61,9 +61,10 @@ void LKInverseComp::iterate()
 
     while (k>0)
     {
-        // ///    printf("%f %f \n ", CV_MAT_ELEM(*WarpMatrix, float,0, 1),CV_MAT_ELEM(*WarpMatrix, float,1, 1));
-        // ///    printf("%f %f \n", CV_MAT_ELEM(*WarpMatrix, float,0, 0),CV_MAT_ELEM(*WarpMatrix, float,1, 0));
-        // ///   printf("%f %f \n ", CV_MAT_ELEM(*WarpMatrix, float,0, 2),CV_MAT_ELEM(*WarpMatrix, float,1, 2));
+     //    printf("%f %f \n ", CV_MAT_ELEM(*WarpMatrix, float,0, 0),CV_MAT_ELEM(*WarpMatrix, float,0, 1));
+   //printf("%f %f \n ", CV_MAT_ELEM(*WarpMatrix, float,1, 0),CV_MAT_ELEM(*WarpMatrix, float,1,1 ));
+
+   //printf("%f %f \n", CV_MAT_ELEM(*WarpMatrix, float,0, 2),CV_MAT_ELEM(*WarpMatrix, float,1, 2));
 
         k--;
 
@@ -102,7 +103,7 @@ void LKInverseComp::iterate()
                             pixelCount++;
                             float imageValue =interpolate<uchar>(iterateImage, Wi, Wj);
                             totalError+=imageValue-templateValue;
-                            CV_MAT_ELEM(*errorImage[index], float, newI*(templateImage->height/4) + newJ, 0) =imageValue-templateValue;
+                            CV_MAT_ELEM(*errorImage[index], float, newI*(templateImage->height/4) + newJ, 0) = (imageValue-templateValue);
                         }
                     }
 
@@ -158,7 +159,7 @@ void LKInverseComp::iterate()
 
             }
         }
-        for (int i=0;i<4;i++)
+        for (int i=0;i<5;i++)
         {
             int max=errorValues[0];
             int maxindex=0;
@@ -214,13 +215,16 @@ void LKInverseComp::iterate()
         //     printf ("%f %f %f %f %f %f %f \n",p1,p2,p3,p4,p5,p6);
         //  printf("%e MEAN ERROR \n",averageError);
         setWarpMatrix(WarpMatrixDeltaP,p1,p2,p3,p4,p5,p6);
+                cvSet(WarpMatrixDeltaPInverse, cvScalar(0));
+
         cvInvert(WarpMatrixDeltaP,WarpMatrixDeltaPInverse);
-        cvMatMul(WarpMatrixDeltaPInverse,WarpMatrix,WarpMatrix);
+
+        cvMatMul(WarpMatrix,WarpMatrixDeltaPInverse,WarpMatrix);
 
 
-        if (fabs(p1)<=DeltaE && fabs(p2)<=DeltaE && fabs(p3)<=DeltaE && fabs(p4)<=DeltaE && fabs(p5)<=DeltaE && fabs(p6)<=DeltaE)
-        {
-            printf("Broken on Kth Iteration %d \n",k);
+    if (fabs(p1)<=DeltaE && fabs(p2)<=DeltaE && fabs(p3)<=DeltaE && fabs(p4)<=DeltaE && fabs(p5)<=DeltaE && fabs(p6)<=DeltaE)
+     {
+printf("Broken on Kth Iteration %d \n",k);
             break;
         }
     }
@@ -268,34 +272,55 @@ void LKInverseComp::preCompute()
 
 
 // Normal Gradient Doesnt seem to be working ???
-    /*
+/*
         for (int j=0; j<templateImage->height; j++)
         {
             for (int i=0; i<templateImage->width; i++)
             {
-                CvScalar s1,s2,s3;
+                CvScalar s1,s2,s3,s4;
+                s4.val[0]=0;
+                                    cvSet2D(GradientX,j,i,s4);
+                    cvSet2D(GradientX,j,i,s4);
+
                                 s1=cvGet2D(templateImage,j,i);
 
-                if((i+1)< templateImage->width)
+                if((i+1)< (templateImage->width-1))
                {
                 s2=cvGet2D(templateImage,j,i+1);
                 s3.val[0]=s2.val[0]-s1.val[0];
                     cvSet2D(GradientX,j,i,s3);
                }
-                    if((j+1)< templateImage->height)
+                 if((j+1)< (templateImage->height-1))
                {
                 s2=cvGet2D(templateImage,j+1,i);
                 s3.val[0]=s2.val[0]-s1.val[0];
                     cvSet2D(GradientY,j,i,s3);
                }
+
             }
 
-        }
-    */
-    cvSobel(templateImage, GradientX, 1, 0);
-    cvSobel(templateImage, GradientY, 0, 1);
-    cvConvertScale(GradientX, GradientX,.2);
-    cvConvertScale(GradientY, GradientY, .2);
+     }
+  */
+/*
+  CvMat* filterGrad =cvCreateMat(3,3, CV_32F);
+  cvZero(filterGrad);
+  CvScalar s1,s2;
+  s1.val[0]=1;
+  s2.val[0]=-1;
+cvSet2D(filterGrad,1,2,s1);
+cvSet2D(filterGrad,1,0,s2);
+cvFilter2D( templateImage, GradientX,filterGrad);
+
+  cvZero(filterGrad);
+
+    cvSet2D(filterGrad,0,1,s2);
+cvSet2D(filterGrad,2,1,s1);
+cvFilter2D( templateImage, GradientY,filterGrad);
+*/
+   cvSobel(templateImage, GradientX, 1, 0);
+   cvSobel(templateImage, GradientY, 0, 1);
+ cvConvertScale(GradientX, GradientX, .17);
+ cvConvertScale(GradientY, GradientY, .16);
 
     steepestDescentImage  = cvCreateMat((templateImage->width*templateImage->height), 6, CV_32F);
     cvSet(steepestDescentImage, cvScalar(0));

@@ -35,26 +35,26 @@ IplImage * frame_copy=0;
 
 opencvWebcam::opencvWebcam()
 {
-  //capture = cvCreateFileCapture("ggm2.avi");
-  //  capture =cvCaptureFromCAM(0);
+    //capture = cvCreateFileCapture("ggm2.avi");
+    //  capture =cvCaptureFromCAM(0);
 }
 void opencvWebcam::stopCamera()
 {
-    if(capture!=0)
-    cvReleaseCapture( &capture );
+    if (capture!=0)
+        cvReleaseCapture( &capture );
 
-  //capture = cvCreateFileCapture("ggm2.avi");
-  //  capture =cvCaptureFromCAM(0);
+    //capture = cvCreateFileCapture("ggm2.avi");
+    //  capture =cvCaptureFromCAM(0);
 }
 int opencvWebcam::startCamera()
 {
-capture = cvCreateFileCapture("/home/rohananil/1.avi");
-   //capture =cvCaptureFromCAM(0);
-// capture = cvCreateFileCapture("/home/rohananil/video_001.mp4");
-    if(capture==0)
-    return 0;
+   //capture = cvCreateFileCapture("/home/rohananil/COP/runninglinux.avi");
+    //capture =cvCaptureFromCAM(0);
+     capture = cvCreateFileCapture("/home/rohananil/1.avi");
+    if (capture==0)
+        return 0;
     else
-    return 1;
+        return 1;
 }
 
 IplImage *opencvWebcam::queryFrame()
