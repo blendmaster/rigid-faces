@@ -62,6 +62,18 @@ void on_mouse( int event, int x, int y, int flags, void* param )
 }
 int main(int argc, char *argv[])
 {
+
+    /////
+/*
+    CvVideoWriter *writer = 0;
+int isColor = 1;
+int fps     = 25;  // or 30
+int frameW  = 640; // 744 for firewire cameras
+int frameH  = 480; // 480 for firewire cameras
+writer=cvCreateVideoWriter("out.avi",-1,
+                     fps,cvSize(frameW,frameH),isColor);
+ */
+    /////
     opencvWebcam webcam;
     cvNamedWindow( "LK Inverse Compositional- Affine 6 Parameter", 0 );
     cvNamedWindow("template");
@@ -99,6 +111,9 @@ int main(int argc, char *argv[])
             }
 
             camImage = webcam.queryFrame();
+            if(camImage==0)
+            { //cvReleaseVideoWriter(&writer);
+            break; }
           //  cvSub(camImage,backGroundSubtraction,camImage);
             CvSize photo_size = cvSize(camImage->width,camImage->height);
             grayIterateImage = cvCreateImage(photo_size, IPL_DEPTH_8U, 1);
@@ -166,6 +181,7 @@ int main(int argc, char *argv[])
             cvLine(camImage,p3,p4, cvScalar(255,0,255), 2);
             cvLine(camImage,p4,p1, cvScalar(0,0,255), 2);
             cvShowImage( "image",camImage);
+            //  cvWriteFrame(writer,camImage);      // add the frame to the file
             cvWaitKey(3);
 
             cvReleaseImage(&camImage);
