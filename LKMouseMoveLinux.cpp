@@ -8,6 +8,8 @@
 #include "highgui.h"
 #include "opencvWebcam.h"
 #include "LKInverseCompRobustClass.h"
+#include <X11/Xlib.h>
+#include <X11/extensions/XTest.h>
 
 #include <iostream>
 #include <stdio.h>
@@ -88,6 +90,7 @@ int counter=0;
     CvPoint p1,p2,p3,p4;
 
     cvShowImage( "image",camImage  );
+    Display *dpy = XOpenDisplay (0);
 
 
 
@@ -100,7 +103,7 @@ int counter=0;
             double t1;
   //backGroundSubtraction = webcam.queryFrame();
                 cvShowImage( "template",camImage);
-            while (t1<911000 &&flag==0)
+            while (t1<1000 &&flag==0)
             {
               camImage = webcam.queryFrame();
                 cvShowImage( "image",camImage);
@@ -182,6 +185,16 @@ int counter=0;
             cvLine(camImage,p3,p4, cvScalar(255,0,255), 2);
             cvLine(camImage,p4,p1, cvScalar(0,0,255), 2);
             cvShowImage( "image",camImage);
+
+double rat1=(  CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2))/IMAGE_WIDTH;
+double rat2=(  CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2))/IMAGE_HEIGHT;
+rat1*=1680;
+rat2*=1050 ;
+printf("%e %e \n",CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2),CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
+
+                            XTestFakeMotionEvent (dpy, DefaultScreen (dpy),int(rat1) ,int( rat2), 0);
+                XFlush (dpy);
+
            // char a[300];
            // sprintf(a,"/home/rohananil/COP/images/%06d.jpg",counter++);
            //     cvSaveImage(a,camImage);

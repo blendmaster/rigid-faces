@@ -13,8 +13,8 @@
 6 Parameter Affine -2d Lucas Kanade Tracker Class
 */
 
-    const float DeltaE = 1E-5f;
-	const int numberOfIterations = 25;
+    const float DeltaE = 1E-7f;
+	const int numberOfIterations = 15;
 
 class LKInverseComp
 {
@@ -75,10 +75,8 @@ float interpolate(IplImage* pImage, float x, float y)
 
     T* row1 = &CV_IMAGE_ELEM(pImage, T, yi, xi);
     T* row2 = &CV_IMAGE_ELEM(pImage, T, yi+1, xi);
-    float interpolated_value = (1.0f-k1)*(1.0f-k2)*(float)row1[0] +
-                               (f1 ? ( k1*(1.0f-k2)*(float)row1[1] ):0) +
-                               (f2 ? ( (1.0f-k1)*k2*(float)row2[0] ):0) +
-                               ((f1 && f2) ? ( k1*k2*(float)row2[1] ):0) ;
+    float interpolated_value = (1.0f-k1)*(1.0f-k2)*(float)row1[0] + (f1 ? ( k1*(1.0f-k2)*(float)row1[1] ):0) +
+                               (f2 ? ( (1.0f-k1)*k2*(float)row2[0] ):0) + ((f1 && f2) ? ( k1*k2*(float)row2[1] ):0) ;
 
     return interpolated_value;
 }

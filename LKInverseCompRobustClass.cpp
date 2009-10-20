@@ -319,8 +319,8 @@ cvFilter2D( templateImage, GradientY,filterGrad);
 */
    cvSobel(templateImage, GradientX, 1, 0);
    cvSobel(templateImage, GradientY, 0, 1);
- cvConvertScale(GradientX, GradientX, .16);
- cvConvertScale(GradientY, GradientY, .16);
+ cvConvertScale(GradientX, GradientX, .10);
+ cvConvertScale(GradientY, GradientY, .10);
 
     steepestDescentImage  = cvCreateMat((templateImage->width*templateImage->height), 6, CV_32F);
     cvSet(steepestDescentImage, cvScalar(0));
