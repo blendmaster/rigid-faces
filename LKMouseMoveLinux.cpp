@@ -86,6 +86,8 @@ int counter=0;
 
     LKInverseComp lk;
 
+int prevx;
+int prevy;
 
     CvPoint p1,p2,p3,p4;
 
@@ -103,7 +105,7 @@ int counter=0;
             double t1;
   //backGroundSubtraction = webcam.queryFrame();
                 cvShowImage( "template",camImage);
-            while (t1<1000 &&flag==0)
+            while (t1<9000 &&flag==0)
             {
               camImage = webcam.queryFrame();
                 cvShowImage( "image",camImage);
@@ -115,7 +117,7 @@ int counter=0;
             camImage = webcam.queryFrame();
             if(camImage==0)
             { //cvReleaseVideoWriter(&writer);
-            break; }
+            continue; }
           //  cvSub(camImage,backGroundSubtraction,camImage);
             CvSize photo_size = cvSize(camImage->width,camImage->height);
             grayIterateImage = cvCreateImage(photo_size, IPL_DEPTH_8U, 1);
@@ -152,6 +154,8 @@ int counter=0;
             piTop.y=ptTop.y;
             if (flag==0)
             {
+                prevx=ptTop.x + (ptBottom.x -ptTop.x)/2;
+prevy=ptTop.y+(ptBottom.y -ptTop.y)/2;
                 templateImage = cvCreateImage(cvSize(ptBottom.x-ptTop.x,ptBottom.y-ptTop.y), IPL_DEPTH_8U, 1);
                 cvSetImageROI(grayIterateImage ,cvRect(ptTop.x,ptTop.y,ptBottom.x-ptTop.x,ptBottom.y-ptTop.y));
                 cvResize(  grayIterateImage, 	templateImage, CV_INTER_LINEAR );
@@ -186,14 +190,45 @@ int counter=0;
             cvLine(camImage,p4,p1, cvScalar(0,0,255), 2);
             cvShowImage( "image",camImage);
 
-double rat1=(  CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2))/IMAGE_WIDTH;
-double rat2=(  CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2))/IMAGE_HEIGHT;
-rat1*=1680;
-rat2*=1050 ;
+         double tx= int( CV_MAT_ELEM(*lk.WarpMatrix, float,0, 1)*(ptBottom.y-ptTop.y)/2 + CV_MAT_ELEM(*lk.WarpMatrix, float,0, 0)*(ptBottom.x-ptTop.x)/2 + CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2));
+         double ty=  int(CV_MAT_ELEM(*lk.WarpMatrix, float,1, 1)*(ptBottom.y-ptTop.y)/2 + CV_MAT_ELEM(*lk.WarpMatrix, float,1, 0)*(ptBottom.x-ptTop.x)/2 +CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
+
+
+int swid=XDisplayWidth(dpy,DefaultScreen (dpy));
+int shei =XDisplayHeight(dpy,DefaultScreen (dpy));
+int movementx=0;
+int movementy=0;
+printf("%e %e %d %d %d %d\n",tx,ty,prevx,prevy,swid,shei);
+
+movementx=((prevx-int(tx))*30);
+movementy=((prevy-int(ty))*30);
+
+if((prevx-(int)tx)>0)
+ movementx*=1;
+if((prevy-(int)ty)>0)
+ movementy*=1;
+
+XTestFakeRelativeMotionEvent (dpy, movementx ,movementy, 0);
+printf("%d %d \n",movementx,movementy);
+
+prevx=int(tx);
+prevy=int(ty);
+
+//XTestFakeMotionEvent (dpy, DefaultScreen (dpy),int(rat1) ,int( rat2), 0);
+
+/*
+
+double rat1=(tx)/IMAGE_WIDTH;
+double rat2=(ty)/IMAGE_HEIGHT;
+rat1*=swid;
+rat2*=shei;
+rat1=swid-rat1;
+rat2=shei-rat2;
+
 printf("%e %e \n",CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2),CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
 
                             XTestFakeMotionEvent (dpy, DefaultScreen (dpy),int(rat1) ,int( rat2), 0);
-                XFlush (dpy);
+          */      XFlush (dpy);
 
            // char a[300];
            // sprintf(a,"/home/rohananil/COP/images/%06d.jpg",counter++);

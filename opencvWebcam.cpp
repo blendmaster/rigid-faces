@@ -49,8 +49,8 @@ void opencvWebcam::stopCamera()
 int opencvWebcam::startCamera()
 {
    //capture = cvCreateFileCapture("/home/rohananil/COP/runninglinux.avi");
-  //capture =cvCaptureFromCAM(0);
-      capture = cvCreateFileCapture("/home/rohananil/1.mov");
+  capture =cvCaptureFromCAM(0);
+  //  capture = cvCreateFileCapture("/home/rohananil/bos.avi");
     if (capture==0)
         return 0;
     else

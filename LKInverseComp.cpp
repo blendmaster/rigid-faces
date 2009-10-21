@@ -100,7 +100,7 @@ int counter=0;
             double t1;
   //backGroundSubtraction = webcam.queryFrame();
                 cvShowImage( "template",camImage);
-            while (t1<911000 &&flag==0)
+            while (t1<11000 &&flag==0)
             {
               camImage = webcam.queryFrame();
                 cvShowImage( "image",camImage);

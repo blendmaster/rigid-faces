@@ -261,66 +261,18 @@ void LKInverseComp::setWarpMatrix(CvMat* Warp,float p1=0,float p2=0,float p3 =0,
     CV_MAT_ELEM(*Warp, float,2, 1)=0;
     CV_MAT_ELEM(*Warp, float,2, 2)=1;
 }
-
 void LKInverseComp::preCompute()
 {
 
     GradientX = cvCreateImage(cvSize(templateImage->width,templateImage->height),  IPL_DEPTH_32F, 1);
     GradientY = cvCreateImage(cvSize(templateImage->width,templateImage->height),  IPL_DEPTH_32F, 1);
-    cvZero(GradientX);
-    cvZero(GradientY);
+cvZero(GradientX);
+cvZero(GradientY);
+cvSobel(templateImage, GradientX, 1, 0);
+cvSobel(templateImage, GradientY, 0, 1);
 
-
-// Normal Gradient Doesnt seem to be working ???
-/*
-        for (int j=0; j<templateImage->height; j++)
-        {
-            for (int i=0; i<templateImage->width; i++)
-            {
-                CvScalar s1,s2,s3,s4;
-                s4.val[0]=0;
-                                    cvSet2D(GradientX,j,i,s4);
-                    cvSet2D(GradientX,j,i,s4);
-
-                                s1=cvGet2D(templateImage,j,i);
-
-                if((i+1)< (templateImage->width-1))
-               {
-                s2=cvGet2D(templateImage,j,i+1);
-                s3.val[0]=s2.val[0]-s1.val[0];
-                    cvSet2D(GradientX,j,i,s3);
-               }
-                 if((j+1)< (templateImage->height-1))
-               {
-                s2=cvGet2D(templateImage,j+1,i);
-                s3.val[0]=s2.val[0]-s1.val[0];
-                    cvSet2D(GradientY,j,i,s3);
-               }
-
-            }
-
-     }
-  */
-/*
-  CvMat* filterGrad =cvCreateMat(3,3, CV_32F);
-  cvZero(filterGrad);
-  CvScalar s1,s2;
-  s1.val[0]=1;
-  s2.val[0]=-1;
-cvSet2D(filterGrad,1,2,s1);
-cvSet2D(filterGrad,1,0,s2);
-cvFilter2D( templateImage, GradientX,filterGrad);
-
-  cvZero(filterGrad);
-
-    cvSet2D(filterGrad,0,1,s2);
-cvSet2D(filterGrad,2,1,s1);
-cvFilter2D( templateImage, GradientY,filterGrad);
-*/
-   cvSobel(templateImage, GradientX, 1, 0);
-   cvSobel(templateImage, GradientY, 0, 1);
- cvConvertScale(GradientX, GradientX, .10);
- cvConvertScale(GradientY, GradientY, .10);
+ cvConvertScale(GradientX, GradientX, .1);
+ cvConvertScale(GradientY, GradientY, .1);
 
     steepestDescentImage  = cvCreateMat((templateImage->width*templateImage->height), 6, CV_32F);
     cvSet(steepestDescentImage, cvScalar(0));

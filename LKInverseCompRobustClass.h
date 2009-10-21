@@ -13,8 +13,8 @@
 6 Parameter Affine -2d Lucas Kanade Tracker Class
 */
 
-    const float DeltaE = 1E-7f;
-	const int numberOfIterations = 15;
+    const float DeltaE = 1E-5f;
+	const int numberOfIterations = 25;
 
 class LKInverseComp
 {
