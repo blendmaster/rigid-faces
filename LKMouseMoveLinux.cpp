@@ -66,15 +66,15 @@ int main(int argc, char *argv[])
 {
 
     /////
-/*
-    CvVideoWriter *writer = 0;
-int isColor = 1;
-int fps     = 25;  // or 30
-int frameW  = 640; // 744 for firewire cameras
-int frameH  = 480; // 480 for firewire cameras
-writer=cvCreateVideoWriter("out.avi",-1,
-                     fps,cvSize(frameW,frameH),isColor);
- */
+    /*
+        CvVideoWriter *writer = 0;
+    int isColor = 1;
+    int fps     = 25;  // or 30
+    int frameW  = 640; // 744 for firewire cameras
+    int frameH  = 480; // 480 for firewire cameras
+    writer=cvCreateVideoWriter("out.avi",-1,
+                         fps,cvSize(frameW,frameH),isColor);
+     */
     /////
     opencvWebcam webcam;
     cvNamedWindow("template");
@@ -82,18 +82,19 @@ writer=cvCreateVideoWriter("out.avi",-1,
     cvNamedWindow("image");
     cvSetMouseCallback( "image", on_mouse, 0 );
 
-int counter=0;
+    int counter=0;
 
     LKInverseComp lk;
 
-int prevx;
-int prevy;
+    int prevx;
+    int prevy;
 
     CvPoint p1,p2,p3,p4;
 
     cvShowImage( "image",camImage  );
     Display *dpy = XOpenDisplay (0);
 
+    double prevt = (double)cvGetTickCount();
 
 
     int flag=0;
@@ -103,11 +104,11 @@ int prevy;
         {
             double t = (double)cvGetTickCount();
             double t1;
-  //backGroundSubtraction = webcam.queryFrame();
-                cvShowImage( "template",camImage);
+            //backGroundSubtraction = webcam.queryFrame();
+            cvShowImage( "template",camImage);
             while (t1<9000 &&flag==0)
             {
-              camImage = webcam.queryFrame();
+                camImage = webcam.queryFrame();
                 cvShowImage( "image",camImage);
                 cvWaitKey(11);
                 cvReleaseImage(&camImage);
@@ -115,10 +116,12 @@ int prevy;
             }
 
             camImage = webcam.queryFrame();
-            if(camImage==0)
-            { //cvReleaseVideoWriter(&writer);
-            continue; }
-          //  cvSub(camImage,backGroundSubtraction,camImage);
+            if (camImage==0)
+            {
+                //cvReleaseVideoWriter(&writer);
+                continue;
+            }
+            //  cvSub(camImage,backGroundSubtraction,camImage);
             CvSize photo_size = cvSize(camImage->width,camImage->height);
             grayIterateImage = cvCreateImage(photo_size, IPL_DEPTH_8U, 1);
 
@@ -140,11 +143,11 @@ int prevy;
 
                 }
             }
-            if((ptBottom.x-ptTop.x)%4!=0)
-            ptBottom.x+=(4-(ptBottom.x-ptTop.x)%4);
+            if ((ptBottom.x-ptTop.x)%4!=0)
+                ptBottom.x+=(4-(ptBottom.x-ptTop.x)%4);
 
-            if((ptBottom.y-ptTop.y)%4!=0)
-            ptBottom.y+=(4-(ptBottom.y-ptTop.y)%4);
+            if ((ptBottom.y-ptTop.y)%4!=0)
+                ptBottom.y+=(4-(ptBottom.y-ptTop.y)%4);
 
 
 
@@ -155,7 +158,8 @@ int prevy;
             if (flag==0)
             {
                 prevx=ptTop.x + (ptBottom.x -ptTop.x)/2;
-prevy=ptTop.y+(ptBottom.y -ptTop.y)/2;
+                prevy=ptTop.y+(ptBottom.y -ptTop.y)/2;
+                prevt = (double)cvGetTickCount();
                 templateImage = cvCreateImage(cvSize(ptBottom.x-ptTop.x,ptBottom.y-ptTop.y), IPL_DEPTH_8U, 1);
                 cvSetImageROI(grayIterateImage ,cvRect(ptTop.x,ptTop.y,ptBottom.x-ptTop.x,ptBottom.y-ptTop.y));
                 cvResize(  grayIterateImage, 	templateImage, CV_INTER_LINEAR );
@@ -174,7 +178,8 @@ prevy=ptTop.y+(ptBottom.y -ptTop.y)/2;
             lk.setImage(iterateImage);
             lk.iterate();
 
-
+            double newt = (double)cvGetTickCount();
+            printf("%e \n ",newt-prevt);
 
             p1.x= int(  CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2));
             p1.y=  int( CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
@@ -190,49 +195,83 @@ prevy=ptTop.y+(ptBottom.y -ptTop.y)/2;
             cvLine(camImage,p4,p1, cvScalar(0,0,255), 2);
             cvShowImage( "image",camImage);
 
-         double tx= int( CV_MAT_ELEM(*lk.WarpMatrix, float,0, 1)*(ptBottom.y-ptTop.y)/2 + CV_MAT_ELEM(*lk.WarpMatrix, float,0, 0)*(ptBottom.x-ptTop.x)/2 + CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2));
-         double ty=  int(CV_MAT_ELEM(*lk.WarpMatrix, float,1, 1)*(ptBottom.y-ptTop.y)/2 + CV_MAT_ELEM(*lk.WarpMatrix, float,1, 0)*(ptBottom.x-ptTop.x)/2 +CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
+            double tx= int( CV_MAT_ELEM(*lk.WarpMatrix, float,0, 1)*(ptBottom.y-ptTop.y)/2 + CV_MAT_ELEM(*lk.WarpMatrix, float,0, 0)*(ptBottom.x-ptTop.x)/2 + CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2));
+            double ty=  int(CV_MAT_ELEM(*lk.WarpMatrix, float,1, 1)*(ptBottom.y-ptTop.y)/2 + CV_MAT_ELEM(*lk.WarpMatrix, float,1, 0)*(ptBottom.x-ptTop.x)/2 +CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
 
 
-int swid=XDisplayWidth(dpy,DefaultScreen (dpy));
-int shei =XDisplayHeight(dpy,DefaultScreen (dpy));
-int movementx=0;
-int movementy=0;
-printf("%e %e %d %d %d %d\n",tx,ty,prevx,prevy,swid,shei);
+            int swid=XDisplayWidth(dpy,DefaultScreen (dpy));
+            int shei =XDisplayHeight(dpy,DefaultScreen (dpy));
+            int movementx=0;
+            int movementy=0;
+            printf("%e %e %d %d %d %d\n",tx,ty,prevx,prevy,swid,shei);
+            int k=35;
+            int l=35;
 
-movementx=((prevx-int(tx))*30);
-movementy=((prevy-int(ty))*30);
+            if (fabs(int(((double)prevx-double(tx))))==1)
+                k=6;
 
-if((prevx-(int)tx)>0)
- movementx*=1;
-if((prevy-(int)ty)>0)
- movementy*=1;
+            if (fabs(int(((double)prevy-double(ty))))==1)
+                l=6;
 
-XTestFakeRelativeMotionEvent (dpy, movementx ,movementy, 0);
-printf("%d %d \n",movementx,movementy);
+            if (fabs(int(((double)prevx-double(tx))))==2)
+                k=18;
 
-prevx=int(tx);
-prevy=int(ty);
+            if (fabs(int(((double)prevy-double(ty))))==2)
+                l=18;
+            movementx=int(((double)prevx-double(tx))*k);
+            movementy=int(((double)prevy-double(ty))*l);
+            int c=0;
+            int movementXStep=1;
+            int movementYStep=1;
 
+            while (c< fabs(movementx) + fabs(movementy))
+            {
+                if ((movementx)!=0)
+                {
+                    if (movementx<0)
+                        movementXStep=-1;
+
+                    c++;
+                    XTestFakeRelativeMotionEvent (dpy, movementXStep ,0, 0);
+                    XFlush (dpy);
+
+                }
+                if ((movementy)!=0)
+                {
+                    if (movementy<0)
+                        movementYStep=-1;
+                    c++;
+
+                    XTestFakeRelativeMotionEvent (dpy, 0 ,movementYStep, 0);
+                    XFlush (dpy);
+
+                }
+            }
+            //  XTestFakeRelativeMotionEvent (dpy, movementx ,movementy, 0);
+            printf("%d %d \n",movementx,movementy);
+
+            prevx=int(tx);
+            prevy=int(ty);
+            prevt = (double)cvGetTickCount();
 //XTestFakeMotionEvent (dpy, DefaultScreen (dpy),int(rat1) ,int( rat2), 0);
 
-/*
+            /*
 
-double rat1=(tx)/IMAGE_WIDTH;
-double rat2=(ty)/IMAGE_HEIGHT;
-rat1*=swid;
-rat2*=shei;
-rat1=swid-rat1;
-rat2=shei-rat2;
+            double rat1=(tx)/IMAGE_WIDTH;
+            double rat2=(ty)/IMAGE_HEIGHT;
+            rat1*=swid;
+            rat2*=shei;
+            rat1=swid-rat1;
+            rat2=shei-rat2;
 
-printf("%e %e \n",CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2),CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
+            printf("%e %e \n",CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2),CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
 
-                            XTestFakeMotionEvent (dpy, DefaultScreen (dpy),int(rat1) ,int( rat2), 0);
-          */      XFlush (dpy);
+                                        XTestFakeMotionEvent (dpy, DefaultScreen (dpy),int(rat1) ,int( rat2), 0);
+                      */
 
-           // char a[300];
-           // sprintf(a,"/home/rohananil/COP/images/%06d.jpg",counter++);
-           //     cvSaveImage(a,camImage);
+            // char a[300];
+            // sprintf(a,"/home/rohananil/COP/images/%06d.jpg",counter++);
+            //     cvSaveImage(a,camImage);
 
             //  cvWriteFrame(writer,camImage);      // add the frame to the file
             cvWaitKey(2);
