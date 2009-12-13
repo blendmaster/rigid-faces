@@ -1,0 +1,1 @@
+/usr/bin/c++     -fPIC CMakeFiles/runner.dir/src/runner.cpp.o CMakeFiles/runner.dir/src/opencvWebcam.cpp.o CMakeFiles/runner.dir/src/delaunay.cpp.o CMakeFiles/runner.dir/src/pca.cpp.o CMakeFiles/runner.dir/src/lkFitting.cpp.o CMakeFiles/runner.dir/src/cmupca.cpp.o  -o runner -rdynamic -lcv -lcxcore -lcvaux -lhighgui 

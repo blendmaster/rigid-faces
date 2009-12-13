@@ -1,0 +1,5 @@
+# Hashes of file build rules.
+71ec11b780bdb3e998fff5af13f27f1d include/moc_aamTrainer.cxx
+151662da8c17179a16c3be826516d57f include/moc_canvas.cxx
+80fbe1c37c94219827163b66af95761b include/moc_landmarkpoint.cxx
+fe217989be1455e21cd501e582e9066a ui_aamTrainer.h

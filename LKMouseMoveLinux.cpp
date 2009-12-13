@@ -194,6 +194,7 @@ int main(int argc, char *argv[])
             cvLine(camImage,p3,p4, cvScalar(255,0,255), 2);
             cvLine(camImage,p4,p1, cvScalar(0,0,255), 2);
             cvShowImage( "image",camImage);
+            cvWaitKey(5);
 
             double tx= int( CV_MAT_ELEM(*lk.WarpMatrix, float,0, 1)*(ptBottom.y-ptTop.y)/2 + CV_MAT_ELEM(*lk.WarpMatrix, float,0, 0)*(ptBottom.x-ptTop.x)/2 + CV_MAT_ELEM(*lk.WarpMatrix, float,0, 2));
             double ty=  int(CV_MAT_ELEM(*lk.WarpMatrix, float,1, 1)*(ptBottom.y-ptTop.y)/2 + CV_MAT_ELEM(*lk.WarpMatrix, float,1, 0)*(ptBottom.x-ptTop.x)/2 +CV_MAT_ELEM(*lk.WarpMatrix, float,1, 2));
@@ -274,7 +275,6 @@ int main(int argc, char *argv[])
             //     cvSaveImage(a,camImage);
 
             //  cvWriteFrame(writer,camImage);      // add the frame to the file
-            cvWaitKey(2);
 
             cvReleaseImage(&camImage);
             cvReleaseImage(&grayIterateImage);
