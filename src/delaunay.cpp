@@ -22,6 +22,9 @@
 
 #include<aam.h>
 #include<math.h>
+
+#include "opencv/cvaux.h"
+
 int delaunay::findInMeanShape(double x,double y)
 {
     CvScalar x1,y1;
