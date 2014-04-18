@@ -1,0 +1,12 @@
+CMakeCache.txt
+CMakeFiles/
+Makefile
+alignedset.aam
+cmake_install.cmake
+include/
+libstdcxx-profile.conf.out
+libstdcxx-profile.raw
+libstdcxx-profile.txt
+qt-aamtrainer
+runner
+ui_aamTrainer.h
